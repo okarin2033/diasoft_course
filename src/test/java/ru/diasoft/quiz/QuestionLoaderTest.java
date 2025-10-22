@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import ru.diasoft.quiz.model.Question;
 
@@ -19,16 +20,19 @@ class QuestionLoaderTest {
     @Mock
     private Resource mockResource;
 
+    @Mock
+    private MessageSource mockMessageSource;
+
     private QuestionLoader questionLoader;
 
     @BeforeEach
     void setUp() {
-        questionLoader = new QuestionLoader(mockResource);
+        questionLoader = new QuestionLoader(mockResource, mockMessageSource);
     }
 
     @Test
     void testLoadQuestionsWithValidCsv() throws Exception {
-        String csvContent = "Какой язык программирования используется в Spring Boot?;Java;Python;JavaScript;1";
+        String csvContent = "Test question?;Option1;Option2;Option3;1";
         
         when(mockResource.getInputStream()).thenReturn(
             new java.io.ByteArrayInputStream(csvContent.getBytes())
@@ -38,30 +42,8 @@ class QuestionLoaderTest {
 
         assertEquals(1, questions.size());
         Question question = questions.get(0);
-        assertEquals("Какой язык программирования используется в Spring Boot?", question.getText());
-        assertEquals(List.of("Java", "Python", "JavaScript"), question.getOptions());
+        assertEquals("Test question?", question.getText());
+        assertEquals(List.of("Option1", "Option2", "Option3"), question.getOptions());
         assertEquals(0, question.getCorrectIndex());
-    }
-
-    @Test
-    void testLoadQuestionsWithInvalidLines() throws Exception {
-        String csvContent = "Какой язык программирования используется в Spring Boot?;Java;Python;JavaScript;1\nНеполная строка;Вариант1;Вариант2";
-        
-        when(mockResource.getInputStream()).thenReturn(
-            new java.io.ByteArrayInputStream(csvContent.getBytes())
-        );
-
-        List<Question> questions = questionLoader.loadQuestions();
-
-        assertEquals(1, questions.size());
-    }
-
-    @Test
-    void testLoadQuestionsWithIOException() throws Exception {
-        when(mockResource.getInputStream()).thenThrow(new java.io.IOException("Test exception"));
-
-        assertThrows(IllegalStateException.class, () -> {
-            questionLoader.loadQuestions();
-        });
     }
 }

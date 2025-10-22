@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: course
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: none
+  main:
+    web-application-type: none
+    banner-location: classpath:banner.txt
+    allow-bean-definition-overriding: true
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+  messages:
+    encoding: UTF-8
+    basename: messages
+  web:
+    locale: en
+
+logging:
+  level:
+    ru.diasoft: DEBUG

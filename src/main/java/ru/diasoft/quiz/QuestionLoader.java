@@ -1,6 +1,7 @@
 package ru.diasoft.quiz;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import ru.diasoft.quiz.model.Question;
@@ -11,14 +12,17 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Component
 public class QuestionLoader {
 
 	private final Resource questionsResource;
+	private final MessageSource messageSource;
 
-	public QuestionLoader(@Value("classpath:questions.csv") Resource questionsResource) {
+	public QuestionLoader(@Value("classpath:questions.csv") Resource questionsResource, MessageSource messageSource) {
 		this.questionsResource = questionsResource;
+		this.messageSource = messageSource;
 	}
 
 	public List<Question> loadQuestions() {
@@ -40,7 +44,8 @@ public class QuestionLoader {
 				questions.add(new Question(text, options, correctIndex));
 			}
 		} catch (IOException e) {
-			throw new IllegalStateException("Failed to read questions.csv", e);
+			throw new IllegalStateException(messageSource.getMessage("quiz.failed.read.questions", null,
+                    Locale.getDefault()), e);
 		}
 		return questions;
 	}
