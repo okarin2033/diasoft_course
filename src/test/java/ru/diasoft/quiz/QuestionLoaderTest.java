@@ -12,7 +12,7 @@ class QuestionLoaderTest {
 
 	@Test
 	void loadsQuestionsFromCsv() {
-		QuestionLoader loader = new QuestionLoader(new ClassPathResource("questions.csv"));
+		QuestionLoaderLegacy loader = new QuestionLoaderLegacy(new ClassPathResource("questions.csv"));
 		List<Question> questions = loader.loadQuestions();
 		assertThat(questions).hasSize(5);
 		Question first = questions.get(0);
