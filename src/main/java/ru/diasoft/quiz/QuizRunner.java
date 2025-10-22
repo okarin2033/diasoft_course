@@ -1,6 +1,7 @@
 package ru.diasoft.quiz;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import ru.diasoft.quiz.model.Question;
 
@@ -12,17 +13,21 @@ import java.util.Scanner;
 public class QuizRunner implements CommandLineRunner {
 
 	private final QuestionLoader questionLoader;
+	private final MessageSource messageSource;
+	private final Locale locale;
 
-	public QuizRunner(QuestionLoader questionLoader) {
+	public QuizRunner(QuestionLoader questionLoader, MessageSource messageSource, Locale locale) {
 		this.questionLoader = questionLoader;
+		this.messageSource = messageSource;
+		this.locale = locale;
 	}
 
 	@Override
 	public void run(String... args) {
 		Scanner scanner = new Scanner(System.in);
-		System.out.print("Введите имя: ");
+		System.out.print(messageSource.getMessage("quiz.enter.name", null, locale));
 		String firstName = readNonEmpty(scanner);
-		System.out.print("Введите фамилию: ");
+		System.out.print(messageSource.getMessage("quiz.enter.lastname", null, locale));
 		String lastName = readNonEmpty(scanner);
 
 		List<Question> questions = questionLoader.loadQuestions();
@@ -30,7 +35,7 @@ public class QuizRunner implements CommandLineRunner {
 		for (int i = 0; i < questions.size(); i++) {
 			Question question = questions.get(i);
 			System.out.println();
-			System.out.println("Вопрос " + (i + 1) + ": " + question.getText());
+			System.out.println(messageSource.getMessage("quiz.question.number", new Object[]{i + 1}, locale) + " " + question.getText());
 			List<String> options = question.getOptions();
 			for (int j = 0; j < options.size(); j++) {
 				System.out.println((j + 1) + ") " + options.get(j));
@@ -42,7 +47,7 @@ public class QuizRunner implements CommandLineRunner {
 		}
 
 		System.out.println();
-		System.out.println(firstName + " " + lastName + ", ваша оценка: " + score + " из " + questions.size());
+		System.out.println(firstName + " " + lastName + ", " + messageSource.getMessage("quiz.your.answer", new Object[]{score, questions.size()}, locale));
 	}
 
 	private String readNonEmpty(Scanner scanner) {
@@ -54,13 +59,13 @@ public class QuizRunner implements CommandLineRunner {
 					return trimmed;
 				}
 			}
-			System.out.print("Повторите ввод: ");
+			System.out.print(messageSource.getMessage("quiz.repeat.input", null, locale) + " ");
 		}
 	}
 
 	private int readAnswer(Scanner scanner, int optionsCount) {
 		while (true) {
-			System.out.print("Ваш ответ (введите номер): ");
+			System.out.print(messageSource.getMessage("quiz.enter.answer", null, locale) + " ");
 			String raw = scanner.nextLine();
 			try {
 				int chosen = Integer.parseInt(raw.trim());
@@ -69,7 +74,7 @@ public class QuizRunner implements CommandLineRunner {
 				}
 			} catch (NumberFormatException ignored) {
 			}
-			System.out.println("Введите число от 1 до " + optionsCount + ".");
+			System.out.println(messageSource.getMessage("quiz.invalid.answer", new Object[]{optionsCount}, locale));
 		}
 	}
 }
