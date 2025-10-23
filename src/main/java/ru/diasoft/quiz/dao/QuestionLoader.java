@@ -1,4 +1,4 @@
-package ru.diasoft.quiz;
+package ru.diasoft.quiz.dao;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -63,6 +63,3 @@ public class QuestionLoader {
 		}
 	}
 }
-
-
-

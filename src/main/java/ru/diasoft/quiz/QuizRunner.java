@@ -1,16 +1,16 @@
 package ru.diasoft.quiz;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.diasoft.quiz.model.Question;
+import ru.diasoft.quiz.dao.QuestionLoader;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-@Component
-public class QuizRunner implements CommandLineRunner {
+@Service
+public class QuizRunner {
 
 	private final QuestionLoader questionLoader;
 	private final MessageSource messageSource;
@@ -22,13 +22,8 @@ public class QuizRunner implements CommandLineRunner {
 		this.locale = locale;
 	}
 
-	@Override
-	public void run(String... args) {
+	public String runQuiz(String firstName, String lastName) {
 		Scanner scanner = new Scanner(System.in);
-		System.out.print(messageSource.getMessage("quiz.enter.name", null, locale));
-		String firstName = readNonEmpty(scanner);
-		System.out.print(messageSource.getMessage("quiz.enter.lastname", null, locale));
-		String lastName = readNonEmpty(scanner);
 
 		List<Question> questions = questionLoader.loadQuestions();
 		int score = 0;
@@ -46,21 +41,8 @@ public class QuizRunner implements CommandLineRunner {
 			}
 		}
 
-		System.out.println();
-		System.out.println(firstName + " " + lastName + ", " + messageSource.getMessage("quiz.your.answer", new Object[]{score, questions.size()}, locale));
-	}
-
-	private String readNonEmpty(Scanner scanner) {
-		while (true) {
-			String value = scanner.nextLine();
-			if (value != null) {
-				String trimmed = value.trim();
-				if (!trimmed.isEmpty()) {
-					return trimmed;
-				}
-			}
-			System.out.print(messageSource.getMessage("quiz.repeat.input", null, locale) + " ");
-		}
+		scanner.close();
+		return firstName + " " + lastName + ", " + messageSource.getMessage("quiz.your.answer", new Object[]{score, questions.size()}, locale);
 	}
 
 	private int readAnswer(Scanner scanner, int optionsCount) {
@@ -78,6 +60,3 @@ public class QuizRunner implements CommandLineRunner {
 		}
 	}
 }
-
-
-

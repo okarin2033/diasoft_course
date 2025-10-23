@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
+import ru.diasoft.quiz.dao.QuestionLoader;
 import ru.diasoft.quiz.model.Question;
 
 import java.util.List;
